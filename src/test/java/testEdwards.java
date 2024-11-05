@@ -324,7 +324,7 @@ public class testEdwards {
         String textoCorregido = new String(bytes, StandardCharsets.UTF_8);
         return textoCorregido;
     }
-    //@AfterEach
+    @AfterEach
     public void cerrar() throws InterruptedException {
         Thread.sleep(10000);
         driver.close();
