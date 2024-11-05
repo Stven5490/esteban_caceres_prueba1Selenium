@@ -114,7 +114,7 @@ public class testEdwards {
         By byCalendar = By.xpath("//*[@id=\"datepicker\"]");
         wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.elementToBeClickable(byCalendar)).click();
-       //Mes
+        //Mes
         System.out.println("Mes");
         By byMonthDOB = By.xpath("//*[@id=\"ui-datepicker-div\"]/div/div/select[1]");
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
