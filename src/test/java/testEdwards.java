@@ -14,208 +14,92 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Random;
 
+import static controller.btn.*;
+import static controller.calendar.*;
+import static controller.check.clickTerminos;
+import static controller.comboBox.*;
+import static controller.condiciones.*;
+import static controller.constantes.*;
+import static controller.fix.*;
+import static controller.iFrame.*;
+import static controller.mensajes.*;
+import static controller.textBox.*;
+
 public class testEdwards {
     private static WebDriver driver;
-    private String rutaDriver = System.getProperty("user.id") + "\\src\\test\\resources\\drivers\\chromedriver.exe";
     private WebDriverWait wait;
     @BeforeEach
     public void preCondiciones(){
-        System.getProperty("webdriver.chrome.driver", rutaDriver);
+        System.getProperty(obtenerChromeDriver(), obtenerRutaChrome());
         driver = new ChromeDriver();
     }
     @Test
     public void CP001_llegarSitioEdwards(){
-        String urlBcoEdwards = "https://portales.bancoedwards.cl/personas";
-        driver.get(urlBcoEdwards);
-        System.out.println("Se ingresar al sitio: " + driver.getTitle());
-        System.out.println("Maximizando vista");
-        driver.manage().window().maximize();
+        driver.get(irBcoEdwards());
+        maximizarVentana(driver);
+        obtenerTitulo(driver);
     }
     @Test
     public void CP002_hazteCliente() throws InterruptedException {
         //Pagina principal
         CP001_llegarSitioEdwards();
-        WebElement btnHazteCliente;
-        By bybtnHazteCliente = By.xpath("//*[@id=\"pbec_header-link-hazte_cliente\"]");
-        btnHazteCliente = driver.findElement(bybtnHazteCliente);
-        System.out.println("Validando si existe boton 'Hazte Cliente'.");
-        if (btnHazteCliente.isDisplayed()){
-            System.out.println("El boton si esta");
-            btnHazteCliente.click();
-            System.out.println("Clickeando en boton: " + driver.getTitle());
-            Thread.sleep(10000);
-        } else {
-            System.err.println("No se encuentra el boton.");
-        }
+        clickHazteCliente(driver);
     }
     @Test
     public void CP003_hazteClienteok() throws InterruptedException {
         CP002_hazteCliente();
         //Formulario iFrame
-        WebElement iFrame;
-        By byiFrame = By.id("form_hazte_cliente");
-        iFrame = driver.findElement(byiFrame);
-        driver.switchTo().frame(iFrame);
+        iriFrame(driver);
         //Nombres
-        System.out.println("Ingresando Nombres");
-        WebElement Nombres;
-        By byNombres = By.xpath("//*[@id=\"txt_nombre\"]");
-        Nombres = driver.findElement(byNombres);
-        Nombres.sendKeys("Esteban Orlando");
+        ingresarNombre(driver);
         //Apellidos
-        System.out.println("Ingresando Apellidos");
-        WebElement Apellidos;
-        By byApellidos = By.xpath("//*[@id=\"txt_apellido\"]");
-        Apellidos = driver.findElement(byApellidos);
-        Apellidos.sendKeys("Caceres Creuz");
+        ingresarApellido(driver);
         //Rut
-        System.out.println("Ingresando RUT");
-        WebElement Rut;
-        By byRut = By.xpath("//*[@id=\"txt_rut\"]");
-        Rut = driver.findElement(byRut);
-        Rut.sendKeys(generarRUT());
+        ingresarRutok(driver);
         //Actividad
-        System.out.println("Seleccionando actividad");
-        By bycampoActividad = By.xpath("//*[@id='ddlActividad-selectized']");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(bycampoActividad)).click();
-        By opcionTrabajando = By.xpath("//*[contains(text(), 'Trabajando')]");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(opcionTrabajando)).click();
+        seleccionarActividad(driver);
         //Telefono
-        System.out.println("Indicando Nro. telefonico");
-        WebElement Telefono;
-        By byTelefono = By.xpath("//*[@id=\"txt_telefono\"]");
-        Telefono = driver.findElement(byTelefono);
-        Telefono.sendKeys("12345678");
+        ingresarTelefono(driver);
         //Email
-        System.out.println("Ingresando eMail");
-        WebElement Email;
-        By byEmail = By.xpath("//*[@id=\"txtEmail\"]");
-        Email = driver.findElement(byEmail);
-        Email.sendKeys("x@x.com");
+        ingresarEmail(driver);
         //Siguiente
-        System.out.println("Data ingresada & validada");
-        System.out.println("Clickeando siguiente");
-        WebElement Siguiente;
-        By bySiguiente = By.xpath("//*[@id=\"bt_step\"]");
-        Siguiente = driver.findElement(bySiguiente);
-        Siguiente.click();
+        clickSiguiente(driver);
         //Comuna
-        System.out.println("Seleccionando comuna");
-        By byComuna = By.xpath("//*[@id=\"ddl_comunas-selectized\"]");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(byComuna)).click();
-        By byComunaOpcion = By.xpath("//*[contains(text(), 'Coquimbo')]");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(byComunaOpcion)).click();
+        seleccionarComunaOK(driver);
         //Tramo renta liquida
-        System.out.println("Seleccionando tramo de renta");
-        By byTramoRenta = By.xpath("//*[@id=\"dv_tramo\"]/div[1]/div/div[1]");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(byTramoRenta)).click();
-        By byTramo = By.xpath("//*[contains(text(), '700.000 - 1.800.000')]");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(byTramo)).click();
+        seleccionarRenta(driver);
         //Fecha de nacimiento
         System.out.println("Ingresando fecha de nacimiento");
         //Abrir calendario
-        By byCalendar = By.xpath("//*[@id=\"datepicker\"]");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.elementToBeClickable(byCalendar)).click();
-        //Mes
-        System.out.println("Mes");
-        By byMonthDOB = By.xpath("//*[@id=\"ui-datepicker-div\"]/div/div/select[1]");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(byMonthDOB)).click();
-        Select ddLMonth = new Select(driver.findElement(byMonthDOB));
-        ddLMonth.selectByVisibleText("Abr");
-        //Año
-        System.out.println("Year");
-        By byYearDOB = By.xpath("//*[@id=\"ui-datepicker-div\"]/div/div/select[2]");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(byYearDOB)).click();
-        By byYear = By.xpath("//*[contains(text(), '1990')]");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(byYear)).click();
-        //Dia
-        System.out.println("Dia");
-        By byDiaBOD = By.xpath("//*[@id=\"ui-datepicker-div\"]/table/tbody/tr[2]/td[4]/a");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(byDiaBOD)).click();
+        seleccionarDOB(driver);
         //Seleccion de productos
-        System.out.println("Seleccionando productos");
-        By byProducto = By.xpath("//*[@id=\"dll_productos-selectized\"]");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(byProducto)).click();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        By byProductoOpcion = By.xpath("/html/body/form/div[4]/div[1]/div[3]/div[4]/div[1]/div/div[2]/div/div[5]");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(byProductoOpcion)).click();
+        seleccionarProducto(driver);
         //Terminos y condiciones
-        driver.findElement(By.xpath("/html/body/form/div[4]")).click();
-        System.out.println("Clickeando Terminos & Condiciones");
-        WebElement checkTyC;
-        By byCheckTyC = By.xpath("//*[@id=\"df_check\"]");
-        checkTyC = driver.findElement(byCheckTyC);
-        checkTyC.click();
+        clickTerminos(driver);
         //Enviando solicitud
-        WebElement btnEnviar;
-        By bybtnEnviar = By.xpath("//*[@id=\"bt_guarda\"]");
-        btnEnviar = driver.findElement(bybtnEnviar);
-        btnEnviar.click();
+        clickEnviar(driver);
         //Status ok Ingresado Correctamente
-        String resultadoEsperado = corregirEncoding("¡Ingresado correctamente!");
-        String stringResultado = driver.findElement(By.xpath("/html/body/div[1]/div/div[1]/h2")).getText();
-        Assertions.assertEquals(resultadoEsperado, stringResultado);
+        hazteClienteOK(driver);
     }
     @Test
     public void CP004_hazteClienteRutinValido() throws InterruptedException {
         CP002_hazteCliente();
         //Formulario iFrame
-        WebElement iFrame;
-        By byiFrame = By.id("form_hazte_cliente");
-        iFrame = driver.findElement(byiFrame);
-        driver.switchTo().frame(iFrame);
+        iriFrame(driver);
         //Nombres
-        System.out.println("Ingresando Nombres");
-        WebElement Nombres;
-        By byNombres = By.xpath("//*[@id=\"txt_nombre\"]");
-        Nombres = driver.findElement(byNombres);
-        Nombres.sendKeys("Esteban Orlando");
+        ingresarNombre(driver);
         //Apellidos
-        System.out.println("Ingresando Apellidos");
-        WebElement Apellidos;
-        By byApellidos = By.xpath("//*[@id=\"txt_apellido\"]");
-        Apellidos = driver.findElement(byApellidos);
-        Apellidos.sendKeys("Caceres Creuz");
+        ingresarApellido(driver);
         //Rut
-        System.out.println("Ingresando RUT");
-        WebElement Rut;
-        By byRut = By.xpath("//*[@id=\"txt_rut\"]");
-        Rut = driver.findElement(byRut);
-        Rut.sendKeys("11");
+        ingresarRutNok(driver);
         //Actividad
-        System.out.println("Seleccionando actividad");
-        By bycampoActividad = By.xpath("//*[@id='ddlActividad-selectized']");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(bycampoActividad)).click();
-        By opcionTrabajando = By.xpath("//*[contains(text(), 'Trabajando')]");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(opcionTrabajando)).click();
+        seleccionarActividad(driver);
         //Telefono
-        System.out.println("Indicando Nro. telefonico");
-        WebElement Telefono;
-        By byTelefono = By.xpath("//*[@id=\"txt_telefono\"]");
-        Telefono = driver.findElement(byTelefono);
-        Telefono.sendKeys("12345678");
+        ingresarTelefono(driver);
         //Email
-        System.out.println("Ingresando eMail");
-        WebElement Email;
-        By byEmail = By.xpath("//*[@id=\"txtEmail\"]");
-        Email = driver.findElement(byEmail);
-        Email.sendKeys("x@x.com");
+        ingresarEmail(driver);
         //Siguiente
-        System.out.println("Data ingresada & validada");
-        System.out.println("Clickeando siguiente");
-        WebElement Siguiente;
-        By bySiguiente = By.xpath("//*[@id=\"bt_step\"]");
-        Siguiente = driver.findElement(bySiguiente);
-        Siguiente.click();
+        clickSiguiente(driver);
         //Status Rut invalido
         String resultadoEsperado = corregirEncoding("Por favor, ingrese un rut válido.");
         String stringResultado = driver.findElement(By.xpath("/html/body/form/div[4]/div[1]/div[1]/div[3]/div/div/div/div[2]/label[1]")).getText();
@@ -327,6 +211,7 @@ public class testEdwards {
     @AfterEach
     public void cerrar() throws InterruptedException {
         Thread.sleep(10000);
+        System.out.println("Cerrando vista");
         driver.close();
     }
 }
